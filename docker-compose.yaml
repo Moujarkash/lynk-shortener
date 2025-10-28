@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: lynk_shortener
+    ports:
+      - "8001:8001"
+    environment:
+      - PORT=8001
+      # Database configuration
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_NAME=lynk_shortener
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=${DB_PASSWORD}
+      - MAX_DATABASE_POOL_SIZE=4
+      # JWT configuration
+      - JWT_DOMAIN=lynk.lol
+      - JWT_AUDIENCE=lynk.lol
+      - JWT_REALM=lynk shortener app
+      - JWT_SECRET=${JWT_SECRET}
+    restart: unless-stopped
+    networks:
+      - lynk_network
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: postgres:16-alpine
+    container_name: lynk_postgres
+    environment:
+      - POSTGRES_DB=lynk_shortener
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+    networks:
+      - lynk_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d lynk_shortener"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  lynk_network:
+    driver: bridge
+
+volumes:
+  postgres_data:
