@@ -1,0 +1,35 @@
+{
+    "openapi": "3.1.1",
+    "info": {
+        "title": "Lynk URL Shortener API",
+        "version": "1.0.0",
+        "summary": "API for creating and managing shortened URLs",
+        "description": "This API provides endpoints for creating short links.",
+        "termsOfService": "https://lynk.lol/terms",
+        "contact": "mouhmmad488@gmail.com",
+        "license": "MIT"
+    },
+    "paths": {
+        "/": {
+            "get": {
+                "responses": {
+                    "201": {
+                        "description": ""
+                    },
+                    "204": {
+                        "description": ""
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {},
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "scheme": "bearer"
+            }
+        }
+    }
+}
