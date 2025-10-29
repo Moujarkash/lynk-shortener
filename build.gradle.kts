@@ -59,7 +59,7 @@ ktor {
         contact = "mouhmmad488@gmail.com"
         license = "MIT"
 
-        target = project.layout.projectDirectory.file("openapi/open-api.json")
+        target = project.layout.projectDirectory.file("src/main/resources/openapi/open-api.json")
     }
 }
 
