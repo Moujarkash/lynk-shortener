@@ -1,0 +1,20 @@
+ktor:
+  deployment:
+    port: ${PORT:8001}
+  application:
+    modules:
+      - com.mod.ApplicationKt.module
+
+database:
+  host: ${DB_HOST:localhost}
+  port: ${DB_PORT:5432}
+  name: ${DB_NAME:lynk_shortener}
+  username: ${DB_USERNAME}
+  password: ${DB_PASSWORD}
+  maxPoolSize: ${MAX_DATABASE_POOL_SIZE:4}
+
+jwt:
+  domain: ${JWT_DOMAIN}
+  audience: ${JWT_AUDIENCE}
+  realm: ${JWT_REALM}
+  secret: ${JWT_SECRET}

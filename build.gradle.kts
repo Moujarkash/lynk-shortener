@@ -4,14 +4,13 @@ plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.ktor)
     alias(libs.plugins.kotlin.plugin.serialization)
-    alias(libs.plugins.shadow)
 }
 
 group = "com.mod"
 version = "0.0.1"
 
 application {
-    mainClass = "io.ktor.server.netty.EngineMain"
+    mainClass.set("com.mod.ApplicationKt")
 }
 
 dependencies {
@@ -19,6 +18,7 @@ dependencies {
     implementation(libs.koin.ktor)
     implementation(libs.koin.logger.slf4j)
     implementation(libs.ktor.server.core)
+    implementation(libs.ktor.server.config.yaml)
     implementation(libs.ktor.serialization.kotlinx.json)
     implementation(libs.ktor.server.content.negotiation)
     implementation(libs.postgresql)
@@ -61,9 +61,5 @@ ktor {
 
         target = project.layout.projectDirectory.file("openapi/open-api.json")
     }
-}
-
-tasks.shadowJar {
-    mergeServiceFiles()
 }
 
