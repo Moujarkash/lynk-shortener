@@ -5,6 +5,7 @@ import com.auth0.jwt.algorithms.Algorithm
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
+import java.util.Date
 
 fun Application.configureSecurity() {
     val jwtSecret = environment.config.property("jwt.secret").getString()
@@ -22,7 +23,10 @@ fun Application.configureSecurity() {
                     .build()
             )
             validate { credential ->
-                if (credential.payload.audience.contains(jwtAudience)) JWTPrincipal(credential.payload) else null
+                if (credential.payload.audience.contains(jwtAudience) &&
+                    credential.payload.expiresAt.after(Date())) {
+                    JWTPrincipal(credential.payload)
+                } else null
             }
         }
     }

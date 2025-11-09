@@ -5,11 +5,11 @@ import io.ktor.server.application.*
 import io.ktor.server.metrics.micrometer.*
 import io.ktor.server.plugins.callid.*
 import io.ktor.server.plugins.calllogging.*
-import io.micrometer.prometheus.PrometheusConfig
 import io.micrometer.prometheus.PrometheusMeterRegistry
+import org.koin.ktor.ext.inject
 
 fun Application.configureMonitoring() {
-    val appMicrometerRegistry = PrometheusMeterRegistry(PrometheusConfig.DEFAULT)
+    val appMicrometerRegistry by inject<PrometheusMeterRegistry>()
     
     install(MicrometerMetrics) {
         registry = appMicrometerRegistry

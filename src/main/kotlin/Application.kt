@@ -1,23 +1,17 @@
 package com.mod
 
-import com.mod.plugins.configureFrameworks
-import com.mod.plugins.configureHTTP
-import com.mod.plugins.configureMonitoring
-import com.mod.plugins.configureRouting
-import com.mod.plugins.configureSecurity
-import com.mod.plugins.configureSerialization
+import com.mod.controllers.authRoutes
+import com.mod.database.DatabaseFactory
+import com.mod.plugins.*
+import com.mod.services.AuthService
 import io.github.cdimascio.dotenv.dotenv
 import io.github.flaxoos.ktor.server.plugins.ratelimiter.RateLimiting
 import io.github.flaxoos.ktor.server.plugins.ratelimiter.implementations.TokenBucket
-import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.*
-import io.ktor.server.netty.EngineMain
-import io.ktor.server.plugins.openapi.openAPI
-import io.ktor.server.plugins.swagger.swaggerUI
-import io.ktor.server.response.respond
-import io.ktor.server.routing.get
-import io.ktor.server.routing.route
-import io.ktor.server.routing.routing
+import io.ktor.server.netty.*
+import io.ktor.server.routing.*
+import org.koin.ktor.ext.inject
+import kotlin.getValue
 import kotlin.time.Duration.Companion.seconds
 
 fun main(args: Array<String>) {
@@ -28,9 +22,12 @@ fun main(args: Array<String>) {
         System.setProperty(it.key, it.value) // Load each .env entry into system properties
     }
 
-    EngineMain.main(args)
+    try {
+        EngineMain.main(args)
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
 }
-
 
 fun Application.module() {
     configureFrameworks(log, environment.config)
@@ -39,6 +36,10 @@ fun Application.module() {
     configureSecurity()
     configureHTTP()
     configureRouting()
+
+    DatabaseFactory.init()
+
+    val authService by inject<AuthService>()
 
     routing {
         install(RateLimiting) {
@@ -49,18 +50,8 @@ fun Application.module() {
             }
         }
 
-        /**
-         * Get root.
-         *
-         * @response 201
-         */
-        route("/") {
-            get {
-                call.respond(HttpStatusCode.NoContent)
-            }
+        route("/api/v1") {
+            authRoutes(authService)
         }
-
-        swaggerUI(path = "swagger", swaggerFile = "openapi/open-api.json")
-        openAPI(path = "openapi", swaggerFile = "openapi/open-api.json")
     }
 }

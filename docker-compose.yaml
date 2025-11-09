@@ -22,6 +22,10 @@ services:
       - JWT_AUDIENCE=lynk.lol
       - JWT_REALM=lynk shortener app
       - JWT_SECRET=${JWT_SECRET}
+      # Mailgun configuration
+      - MAILGUN_API_KEY=${MAILGUN_API_KEY}
+      - MAILGUN_DOMAIN=${MAILGUN_DOMAIN}
+      - MAILGUN_SENDER=${MAILGUN_SENDER}
     restart: unless-stopped
     networks:
       - lynk_network
@@ -30,14 +34,14 @@ services:
         condition: service_healthy
 
   db:
-    image: postgres:16-alpine
+    image: postgres:18-alpine
     container_name: lynk_postgres
     environment:
       - POSTGRES_DB=lynk_shortener
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=${DB_PASSWORD}
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql
     ports:
       - "5432:5432"
     restart: unless-stopped
